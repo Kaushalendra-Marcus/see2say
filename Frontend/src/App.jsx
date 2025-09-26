@@ -1,15 +1,18 @@
 import React, { useRef, useState } from "react";
 import "./App.css";
+import Homepage from "./homepage";
 
 const App = () => {
   const [summary, setSummary] = useState("");
   const [audio, setAudio] = useState(null);
   const [videosrc, setVideoSrc] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
   const videoref = useRef(null);
   const stopRef = useRef(false);
 
   const startRecording = async () => {
     try {
+      setIsRecording(true);
       // 1. Camera access
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -27,6 +30,7 @@ const App = () => {
       recorder.ondataavailable = (e) => chunks.push(e.data);
 
       recorder.onstop = async () => {
+        setIsRecording(false);
         // 2. Create video file
         const blob = new Blob(chunks, { type: "video/mp4" });
         const url = URL.createObjectURL(blob);
@@ -76,83 +80,42 @@ const App = () => {
       }, 10000);
     } catch (err) {
       console.error("Camera error:", err);
+      setIsRecording(false);
     }
   };
 
   // Stop loop
   const stopRecording = () => {
     stopRef.current = true;
+    setIsRecording(false);
     console.log("Recording stopped manually!");
   };
 
+  const resetAll = () => {
+    stopRecording();
+    setSummary("");
+    setAudio(null);
+    setVideoSrc(null);
+    if (videoref.current) {
+      videoref.current.srcObject = null;
+    }
+  };
+
   return (
-    <div className="bg-blue-600 w-full h-full min-h-screen p-6 flex items-center justify-center flex-col">
-      <h1 className="text-red-600 text-4xl">Blind Assist Prototype</h1>
-      <div className="flex flex-col gap-6 mt-6">
-        {/* Start Recording */}
-        <button
-          onClick={() => {
-            stopRef.current = false;
-            startRecording();
-          }}
-          className="bg-green-600 rounded-2xl p-3 cursor-pointer hover:bg-blue-800 text-white"
-        >
-          Start Recording (Loop)
-        </button>
-
-        {/* Stop Recording */}
-        <button
-          onClick={stopRecording}
-          className="bg-red-600 rounded-2xl p-3 cursor-pointer hover:bg-red-800 text-white"
-        >
-          Stop Recording
-        </button>
-
-        {/* Live Preview */}
-        <h2 className="text-white font-bold">Live Preview:</h2>
-        <video
-          ref={videoref}
-          autoPlay
-          muted
-          className="mt-2 w-96 rounded-xl shadow-2xl border-2 border-white"
-        />
-
-        {/* Recorded Video Play */}
-        {videosrc && (
-          <div>
-            <h2 className="text-white font-bold mt-4">Last Recorded:</h2>
-            <video
-              src={videosrc}
-              controls
-              autoPlay
-              className="mt-2 w-96 rounded-xl shadow-2xl"
-            />
-          </div>
-        )}
-
-        {/* Show Summary */}
-        {summary && (
-          <div className="mt-4 p-4 border rounded bg-gray-100">
-            <h2 className="text-lg font-bold">Final Summary:</h2>
-            <p>{summary}</p>
-          </div>
-        )}
-
-        {/* Play Audio */}
-        {audio && (
-          <div className="mt-4">
-            <h2 className="text-lg font-bold text-white">Audio Output:</h2>
-            <audio controls autoPlay src={audio} muted={false}></audio>
-          </div>
-        )}
-
-        {summary && (
-          <div>
-            <h2 className="text-lg text-red-700 font-bold">Summary Text is :::::::::</h2>
-            <p>{summary}</p>
-          </div>
-        )}
-      </div>
+    <div className="app-container">
+      <Homepage 
+        isRecording={isRecording}
+        summary={summary}
+        audio={audio}
+        videosrc={videosrc}
+        videoref={videoref}
+        onStartRecording={() => {
+          stopRef.current = false;
+          startRecording();
+        }}
+        onStopRecording={stopRecording}
+        onReset={resetAll}
+      />
     </div>
   );
 };
