@@ -43,10 +43,11 @@ const App = () => {
         form.append("file", file);
 
         try {
-          const res = await fetch("https://kaushalendra-marcus-nayan.hf.space/", {
+          const res = await fetch("https://kaushalendra-marcus-nayan.hf.space/process-video", {
             method: "POST",
             body: form,
           });
+
 
           const data = await res.json();
           console.log("Server Response:", data);
@@ -103,7 +104,7 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <Homepage 
+      <Homepage
         isRecording={isRecording}
         summary={summary}
         audio={audio}
