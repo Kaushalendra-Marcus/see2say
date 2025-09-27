@@ -43,7 +43,7 @@ const App = () => {
         form.append("file", file);
 
         try {
-          const res = await fetch("http://127.0.0.1:8000/process-video", {
+          const res = await fetch("https://kaushalendra-marcus-nayan.hf.space/", {
             method: "POST",
             body: form,
           });
