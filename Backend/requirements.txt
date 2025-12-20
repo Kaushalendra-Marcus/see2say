@@ -1,9 +1,10 @@
 fastapi
 uvicorn
-torch
-transformers
-pillow
-python-multipart
-google-generativeai
+python-dotenv
+google-genai
 opencv-python
-
+PIL
+transformers
+torch
+gtts
+numpy
