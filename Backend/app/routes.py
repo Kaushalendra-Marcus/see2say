@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.utils import text_to_speech_base64
-from app.models import generate_caption
+from app.models import generate_caption, read_image_from_upload
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ async def upload_image(file: UploadFile = File(...)):
         image = await read_image_from_upload(file)
 
         # Generate caption with advanced params
-        caption = generate_caption(image, max_length=60, num_beams=5, temperature=1.0)
+        caption = generate_caption(image, max_length=60, num_beams=5)
 
         return {"filename": file.filename, "caption": caption}
 
