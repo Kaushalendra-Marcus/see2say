@@ -43,7 +43,7 @@ const App = () => {
         form.append("file", file);
 
         try {
-          const res = await fetch("https://kaushalendra-marcus-nayan.hf.space/process-video", {
+          const res = await fetch("https://kaushalendra-marcus-BeaconAssist.hf.space/process-video", {
             method: "POST",
             body: form,
           });
