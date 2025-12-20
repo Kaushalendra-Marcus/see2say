@@ -3,16 +3,17 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-# backend ke andar .env ka path
-env_path = Path(__file__).resolve().parent.parent / ".env"
+# Fix the .env path - it's in the parent directory (Backend), not parent of parent
+env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-print("GEMINI in client file is :::::::::::::::::::::::::::::::::::::::::: ", GEMINI_API_KEY[10])
+# Fixed the print statement to avoid index error
+print("GEMINI in client file is:", GEMINI_API_KEY[:10] if GEMINI_API_KEY else "Not found")
 
 if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY not found !")
+    raise ValueError("GEMINI_API_KEY not found!")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
