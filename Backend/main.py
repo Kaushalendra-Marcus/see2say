@@ -21,17 +21,30 @@ app = FastAPI(title="Image Caption Backend")
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
-# Include router
+
 app.include_router(router)
 
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Image Caption Backend API",
+        "endpoints": {
+            "GET /": "This endpoint",
+            "GET /health": "Health check",
+            "POST /upload": "Upload image for captioning",
+            "POST /process-video": "Upload video for narration"
+        }
+    }
 
 @app.post("/process-video")
 async def process_video(file: UploadFile = File(...)):
@@ -51,7 +64,7 @@ async def process_video(file: UploadFile = File(...)):
         # Convert summary to speech
         audio_base64_str = text_to_speech_base64(summary_text)
         
-        # Clean up uploaded file
+        # uploaded file
         os.remove(file_path)
         
         return JSONResponse(content={
@@ -61,12 +74,7 @@ async def process_video(file: UploadFile = File(...)):
         })
         
     except Exception as e:
-        # Clean up file even on error
+       
         if os.path.exists(file_path):
             os.remove(file_path)
         return JSONResponse(status_code=500, content={"error": str(e)})
-
-
-@app.get("/")
-async def root():
-    return {"message": "Image Caption Backend API"}
