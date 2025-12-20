@@ -1,21 +1,21 @@
-import google.generativeai as genai
+import google.genai as genai  # Changed import
 import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-# Fix the .env path - it's in the parent directory (Backend), not parent of parent
+# Fix the .env path
 env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Fixed the print statement to avoid index error
 print("GEMINI in client file is:", GEMINI_API_KEY[:10] if GEMINI_API_KEY else "Not found")
 
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY not found!")
 
-genai.configure(api_key=GEMINI_API_KEY)
+# Initialize client with the new API
+client = genai.Client(api_key=GEMINI_API_KEY) 
 
 def generate_summary_with_gemini(captions: list) -> str:
     prompt = f"""
@@ -32,6 +32,10 @@ def generate_summary_with_gemini(captions: list) -> str:
         {captions}
     """
 
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
+  
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
+    )
+    
     return response.text.strip()
