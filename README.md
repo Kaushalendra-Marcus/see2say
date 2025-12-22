@@ -1,4 +1,4 @@
-# See2Say — AI Vision to Speech for the Visually Impaired
+# See2Say - AI Vision to Speech for the Visually Impaired
 
 **See2Say** is an AI-powered accessibility platform that helps visually impaired users understand videos through natural speech. It converts video content into meaningful audio narration using modern Computer Vision and Generative AI.
 
